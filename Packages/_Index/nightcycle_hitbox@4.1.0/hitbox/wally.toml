@@ -1,0 +1,10 @@
+[package]
+name = "nightcycle/hitbox"
+description = "An easy way to handle weapon hit detection using rays"
+version = "4.1.0"
+authors = ["Swordphin123"]
+realm = "shared"
+registry = "https://github.com/upliftgames/wally-index"
+exclude = ["Packages", ".vscode"]
+
+[dependencies]

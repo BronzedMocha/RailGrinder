@@ -1,0 +1,6 @@
+{
+  "name": "vinum",
+  "tree": {
+    "$path": "lib"
+  }
+}

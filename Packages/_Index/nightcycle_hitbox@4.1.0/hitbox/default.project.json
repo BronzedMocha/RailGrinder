@@ -1,0 +1,6 @@
+{
+  "name": "hitbox",
+  "tree": {
+    "$path": "lib"
+  }
+}

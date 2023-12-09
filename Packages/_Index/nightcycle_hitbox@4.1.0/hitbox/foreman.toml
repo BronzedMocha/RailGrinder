@@ -1,0 +1,4 @@
+[tools]
+# remodel = { source = "rojo-rbx/remodel", 		version = "0.6.1" }
+rojo = 	{	source = "rojo-rbx/rojo", 			version = "6.2.0"}
+wally = { 	source = "UpliftGames/wally", 		version = "0.3.1" }
