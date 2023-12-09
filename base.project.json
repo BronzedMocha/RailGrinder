@@ -1,0 +1,147 @@
+{
+    "name": "rojo template",
+    "tree": {
+        "$className": "DataModel",
+
+        "Players": {
+            "$properties": {
+                "CharacterAutoLoads": false
+            }
+        },
+
+        "ReplicatedFirst": {
+            "$className": "ReplicatedFirst",
+
+            "RojoProjectFile": {
+                "$className": "StringValue",
+
+                "$properties": {
+                    "Value": "base"
+                }
+            }
+        },
+
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+
+            "Settings": {
+                "$path": "src/settings.lua"
+            },
+
+            "Shared": {
+                "$path": "src/_main/shared",
+
+                "dependencies": {
+                    "$className": "Folder",
+
+                    "fusion": {
+                        "$path": "src/fusion"
+                    },
+    
+                    "benchmarker": {
+                        "$path": "src/benchmarker"
+                    },
+    
+                    "hoarcekat": {
+                        "$path": "src/hoarcekat"
+                    }
+                },
+
+                "utility": {
+                    "$path": "src/utility"
+                },
+
+                "data": {
+                    "$path": "src/_data"
+                }
+            },
+            
+            "Packages": {
+                "$className": "Folder",
+
+                "wally": {
+                    "$path": "Packages"
+                },
+                "npm": {
+                    "$path": "node_modules"
+                }
+            }
+        },
+
+        "ServerScriptService": {
+            "$className": "ServerScriptService",
+
+            "Server": {
+                "$path": "src/_main/server",
+
+                "knit-services": {
+                    "$className": "Folder",
+
+                    "core": {
+                        "$className": "Folder",
+                        "$path": "src/knit/core/services"
+                    },
+
+                    "experimental": {
+                        "$className": "Folder",
+                        "$path": "src/knit/experimental/services"
+                    }
+                },
+
+                "knit-components": {
+                    "$className": "Folder",
+
+                    "core": {
+                        "$className": "Folder",
+                        "$path": "src/knit/core/components-server"
+                    },
+
+                    "experimental": {
+                        "$className": "Folder",
+                        "$path": "src/knit/experimental/components-server"
+                    }
+                }
+            }
+        },
+
+        "StarterPlayer": {
+            "$className": "StarterPlayer",
+
+            "StarterPlayerScripts": {
+                "$className": "StarterPlayerScripts",
+
+                "Client": {
+                    "$path": "src/_main/server",
+
+                    "knit-controllers": {
+                        "$className": "Folder",
+
+                        "core": {
+                            "$className": "Folder",
+                            "$path": "src/knit/core/controllers"
+                        },
+
+                        "experimental": {
+                            "$className": "Folder",
+                            "$path": "src/knit/experimental/controllers"
+                        }
+                    },
+
+                    "knit-components": {
+                        "$className": "Folder",
+
+                        "core": {
+                            "$className": "Folder",
+                            "$path": "src/knit/core/components-client"
+                        },
+
+                        "experimental": {
+                            "$className": "Folder",
+                            "$path": "src/knit/experimental/components-client"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
