@@ -1,0 +1,24 @@
+{
+	"name": "PacketProfiler Plugin Testing",
+	"tree": {
+		"$className": "DataModel",
+		"PluginDebugService": {
+			"$className": "PluginDebugService",
+			"user_PacketProfilerTest.rbxm": {
+				"$className": "Plugin",
+				"PacketProfiler": {
+					"$path": "build/main.server.luau",
+					"Components": {
+						"$path": "src/Components"
+					},
+					"Modules": {
+						"$path": "src/Modules"
+					},
+					"Packages": {
+						"$path": "Packages"
+					}
+				}
+			}
+		}
+	}
+}

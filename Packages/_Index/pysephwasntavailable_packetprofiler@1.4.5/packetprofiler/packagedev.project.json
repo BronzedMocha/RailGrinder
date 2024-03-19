@@ -1,0 +1,24 @@
+{
+	"name": "packetprofiler",
+	"tree": {
+		"$className": "DataModel",
+		"StarterPlayer": {
+			"$className": "StarterPlayer",
+			"StarterPlayerScripts": {
+				"$className": "StarterPlayerScripts",
+				"PacketProfiler": {
+					"$path": "build/packagedev.client.luau",
+					"Components": {
+						"$path": "src/Components"
+					},
+					"Modules": {
+						"$path": "src/Modules"
+					},
+					"Packages": {
+						"$path": "Packages"
+					}
+				}
+			}
+		}
+	}
+}

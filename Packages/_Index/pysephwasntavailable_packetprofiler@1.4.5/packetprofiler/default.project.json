@@ -1,0 +1,12 @@
+{
+  "name": "packetprofiler",
+  "tree": {
+    "$path": "build/main.luau",
+    "Components": {
+      "$path": "src/Components"
+    },
+    "Modules": {
+      "$path": "src/Modules"
+    }
+  }
+}

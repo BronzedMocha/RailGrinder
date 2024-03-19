@@ -1,0 +1,7 @@
+{
+    "test_snippet": {
+        "prefix": ["test"],
+        "body": ["local ${0:Name}Service = game:GetService(\"${0:Name}Service\")"],
+        "description": "Roblox Service"
+    },
+}
