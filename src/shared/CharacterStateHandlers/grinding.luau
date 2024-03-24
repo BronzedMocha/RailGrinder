@@ -201,10 +201,32 @@ function grinding:_setPoint(point0_index)
     self.point1_index = point0_index + 1
 end
 
+function grinding:_validatePoints()
+    local point0 = self:_getPoint(self.point0_index)
+    local point1 = self:_getPoint(self.point1_index)
+
+    if not point0 and not point1 then
+        local nearest_point0, nearest_point1 = RailManager.utility.findNearestPoints(self.position0.WorldCFrame.Position, self.rail.points)
+        self:_setPoint(nearest_point0)
+        return self:_validatePoints()
+    elseif not point0 then
+        self:_setPoint(self.point1_index)
+        return self:_validatePoints()
+    elseif not point1 then
+        self:_setPoint(self.point0_index - 1)
+        return self:_validatePoints()
+    end
+
+    return point0, point1
+end
+
 function grinding:CheckPointDistance()
-    local point0_pos = self:_getPoint(self.point0_index).WorldCFrame.Position
-    local point1_pos = self:_getPoint(self.point1_index).WorldCFrame.Position
-    local player_pos = self.position0.WorldCFrame.Position - vnew(0, -PlayerCore.measurements.ROOT_HEIGHT, 0)
+
+    local point0, point1 = self:_validatePoints()
+
+    local point0_pos = point0.WorldCFrame.Position
+    local point1_pos = point1.WorldCFrame.Position
+    local player_pos = self.position0.WorldCFrame.Position -- - vnew(0, -PlayerCore.measurements.ROOT_HEIGHT, 0)
 
     local full_distance = (point1_pos - point0_pos).Magnitude
     local dist_from0 = (player_pos - point0_pos).Magnitude
@@ -216,7 +238,7 @@ function grinding:CheckPointDistance()
     local SUCCESS_COLOR = Color3.new(0.121568, 0.501960, 0.172549)
     local FAILURE_COLOR = Color3.new(0.501960, 0.121568, 0.121568)
 
-    -- point0 to position1
+    --[[ point0 to position1
     DebugVisualize.vector(
         (point0_pos + player_pos)/2,
         point0_pos - player_pos,
@@ -228,14 +250,13 @@ function grinding:CheckPointDistance()
         (point1_pos + player_pos)/2,
         point1_pos - player_pos,
         if past_point1 then FAILURE_COLOR else SUCCESS_COLOR
-    )
+    )]]
 
     if past_point1 then
         self:_setPoint(self.point1_index)
     end
 
     if before_point0 then
-        print("before point0!!!!!!!!")
         self:_setPoint(self.point0_index - 1)
     end
 end
@@ -248,32 +269,22 @@ function grinding:update(dt: number)
 
     self:CheckPointDistance()
 
-    local point0
-    local point1
-
     local point0_pos = self:_getPoint(self.point0_index).WorldCFrame.Position
     local point1_pos = self:_getPoint(self.point1_index).WorldCFrame.Position
 
     DebugVisualize.sphere(cfnew(point0_pos), 0.5, Color3.new(0.12, 0.34, 0.5))
     DebugVisualize.sphere(cfnew(point1_pos), 0.5, Color3.new(0.29, 0.79, 1))
 
-    --[[local elapsed = GetPointDistanceAlongLine(self.position1.WorldCFrame.Position, point0_pos, point1_pos)
-    if elapsed < RAIL_TRANSITION_MAX_DIST then
-        --print("setting point down")
-        self:_setPoint(self.point0_index - 1)
-    elseif elapsed > 1 - RAIL_TRANSITION_MAX_DIST then -- move rail down
-        self:_setPoint(self.point1_index)
-    end]]
-
     -- get rail segment direction
     local rail_direction = (point0_pos - point1_pos).Unit
 
     local rail_up_dp = rail_direction:Dot(vnew(0,1,0))
 
-    local downward_angle = if rail_up_dp < 0 then rail_direction else -rail_direction
+    local slope_downward_angle = if rail_up_dp < 0 then rail_direction else -rail_direction
     print(rail_up_dp..(if rail_up_dp < 0 then ": gravity guides you toward the end" else ": gravity guides you towards the start"))
+    
     -- derive gravity vector from rail direction (scale downward force by dot product of slope angle)
-    local gravityForce = downward_angle * (rail_up_dp * self.grind_stats.Gravity)
+    local gravityForce = slope_downward_angle * (rail_up_dp * self.grind_stats.Gravity)
 
     -- derive input force from rail direction
     local rawInputVector = ((camera.CFrame.LookVector * InputListener.movement_vector.Y - camera.CFrame.RightVector * InputListener.movement_vector.X) * vnew(1, 0, 1)).Unit
@@ -283,8 +294,6 @@ function grinding:update(dt: number)
     if inputForce.X ~= inputForce.X then -- NaN check
         inputForce = vnew(0,0,0)
     end
-
-    print("Input Power:", tostring(self.grind_stats.InputPower))
 
     -- accumulate forces
     local velocity = inputForce + gravityForce
@@ -299,22 +308,18 @@ function grinding:update(dt: number)
     --velocity += frictionForce
 
     -- add to position
-    local resulting_position = self.position1.WorldCFrame.Position * velocity
-    --self.position1.WorldCFrame = cfnew(resulting_position) --, resulting_position + rail_direction)
+    local resulting_position = self.position0.WorldCFrame.Position + velocity
     
-    --self.position1.WorldCFrame = self.position1.WorldCFrame:grinding._Lerp(self.position1.WorldCFrame * cfnew(vnew(), vnew() + rail_direction), self.grind_stats.RotationalStiffness)
-    --self.position1.WorldCFrame = self.position1.WorldCFrame * cfnew(velocity)
-    -- self.position1.WorldCFrame = clook(resulting_position, resulting_position + velocity)
-    --self.align_ori.LookAtPosition = (self.position1.WorldCFrame * cfnew(velocity)).Position
-
+    self.position1.WorldCFrame = clook(resulting_position, resulting_position + velocity)
+    
     self.last_velocity = velocity
 
     -- debug
     DebugVisualize.arrow(self.position0.WorldCFrame.Position, gravityForce, Color3.fromRGB(123, 0, 255))
     DebugVisualize.arrow(self.position0.WorldCFrame.Position, inputForce, Color3.fromRGB(0, 229, 255))
     DebugVisualize.arrow(self.position0.WorldCFrame.Position, velocity, Color3.fromRGB(255, 128, 0))
-    DebugVisualize.arrow(self.position0.WorldCFrame.Position, self.align_ori.PrimaryAxis, Color3.fromRGB(255, 0, 0))
-    DebugVisualize.arrow(self.position0.WorldCFrame.Position, self.align_ori.SecondaryAxis, Color3.fromRGB(255, 255, 0))
+    --DebugVisualize.arrow(self.position0.WorldCFrame.Position, self.align_ori.PrimaryAxis, Color3.fromRGB(255, 0, 0))
+    --DebugVisualize.arrow(self.position0.WorldCFrame.Position, self.align_ori.SecondaryAxis, Color3.fromRGB(255, 255, 0))
 
     --DebugVisualize.vector(self.position1.WorldCFrame.Position, gravityForce, Color3.new(0.047058, 0.635294, 1)) -- gravity
     --DebugVisualize.vector(self.position1.WorldCFrame.Position, inputForce, Color3.new(0.698039, 0.047058, 1)) -- input
